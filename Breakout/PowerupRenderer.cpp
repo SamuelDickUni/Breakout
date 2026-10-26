@@ -1,15 +1,13 @@
-#include "PowerupBase.h"
+#include "PowerupRenderer.h"
 #include <cmath>
 #include <iostream>
 
-PowerupBase::PowerupBase(sf::RenderWindow* window, Paddle* paddle, Ball* ball, float spawnX)
-    : _time(0.0f) // Initialize the time variable
+PowerupRenderer::PowerupRenderer(sf::RenderWindow* window, float spawnX, std::shared_ptr<Powerup> powerup)
+    : _time(0.0f), _powerup(powerup) // Initialize the time variable and powerup
 {
     _window = window;
-    _paddle = paddle;
     _sprite.setRadius(RADIUS);
     _isAlive = true;
-    _ball = ball;
 
     // Initial position and direction with some variability
     float initialX = spawnX;
@@ -18,11 +16,11 @@ PowerupBase::PowerupBase(sf::RenderWindow* window, Paddle* paddle, Ball* ball, f
 
 }
 
-PowerupBase::~PowerupBase()
+PowerupRenderer::~PowerupRenderer()
 {
 }
 
-void PowerupBase::update(float dt)
+void PowerupRenderer::update(float dt)
 {
     _time += dt; // Increment time
 
@@ -49,27 +47,17 @@ void PowerupBase::update(float dt)
 
 }
 
-void PowerupBase::render()
+void PowerupRenderer::render()
 {
     _window->draw(_sprite);
 }
 
-bool PowerupBase::checkCollisionWithPaddle()
+bool PowerupRenderer::checkCollisionWithPaddle(Paddle* paddle)
 {
-    if (_sprite.getGlobalBounds().intersects(_paddle->getBounds()))
+    if (_sprite.getGlobalBounds().intersects(paddle->getBounds()))
     {
         _isAlive = false;
         return true;
     }
     return false;
-}
-
-void PowerupBase::setAlive(bool alive)
-{
-    _isAlive = alive;
-}
-
-bool PowerupBase::isAlive()
-{
-    return _isAlive;
 }

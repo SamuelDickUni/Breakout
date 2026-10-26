@@ -5,7 +5,7 @@
 
 GameManager::GameManager(sf::RenderWindow* window)
     : _window(window), _paddle(nullptr), _ball(nullptr), _brickManager(nullptr), _powerupManager(nullptr),
-    _messagingSystem(nullptr), _ui(nullptr), _pause(false), _time(0.f), _lives(3), _pauseHold(0.f), _levelComplete(false),
+    _messagingSystem(nullptr), _ui(nullptr), _pause(false), _time(0.f), _lives(INITIAL_LIVES), _pauseHold(0.f), _levelComplete(false),
     _powerupInEffect({ none,0.f }), _timeLastPowerupSpawned(0.f)
 {
     _font.loadFromFile("font/montS.ttf");
@@ -22,6 +22,14 @@ void GameManager::initialize()
     _messagingSystem = new MessagingSystem(_window);
     _ball = new Ball(_window, 400.0f, this); 
     _powerupManager = new PowerupManager(_window, _paddle, _ball);
+    _powerupManager->RegisterPowerUps({
+		//std::make_shared<Powerup>(5.0f, "Big Paddle",   PaddleModifier{ 0.5f }),            // Increases paddle size by 50%
+		std::make_shared<Powerup>(5.0f, "Small Paddle", PaddleModifier{ -0.5f }),           // Decreases paddle size by 50%
+		//std::make_shared<Powerup>(5.0f, "Slow Ball",    BallModifier{ 0.5f, 0.f, 1.f }),    // Decreases ball speed by 50%
+		std::make_shared<Powerup>(10.0f, "Fast Ball",    BallModifier{ 1.f, 0.f, 1.f }),     // Increases ball speed by 100%
+		//std::make_shared<Powerup>(5.0f, "Fire Ball",    BallModifier{ 1.f, 10.f, 1.f })     // Increases ball damage by 10
+
+		});
     _ui = new UI(_window, _lives, this);
 
     // Create bricks
@@ -30,8 +38,25 @@ void GameManager::initialize()
 
 void GameManager::update(float dt)
 {
-    _powerupInEffect = _powerupManager->getPowerupInEffect();
-    _ui->updatePowerupText(_powerupInEffect);
+	const auto &activePowerups = _powerupManager->getPowerupsInEffect();
+    std::map<std::shared_ptr<Powerup>, std::vector<float>> powersInEffect;
+
+	// group active power-ups by their type and store their remaining times
+    for (const ActivePowerup& activePowerup : activePowerups)
+    {
+		auto powerup = activePowerup.powerup;
+		auto remainingTime = activePowerup.remainingTime;
+
+		if (powersInEffect.find(powerup) == powersInEffect.end())
+		{
+			powersInEffect[powerup] = { remainingTime };
+		}
+        else {
+            powersInEffect[powerup].push_back(remainingTime);
+        }
+    }
+
+    _ui->updatePowerupText(powersInEffect);
     _powerupInEffect.second -= dt;
     
 

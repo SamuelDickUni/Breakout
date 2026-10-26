@@ -42,26 +42,17 @@
     <ClCompile Include="PowerupManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PowerupBase.cpp">
+    <ClCompile Include="PowerupRenderer.cpp">
       <Filter>Powerups</Filter>
     </ClCompile>
     <ClCompile Include="UI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PowerupBigPaddle.cpp">
-      <Filter>Powerups</Filter>
+    <ClCompile Include="Powerup.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PowerupSlowBall.cpp">
-      <Filter>Powerups</Filter>
-    </ClCompile>
-    <ClCompile Include="PowerupSmallPaddle.cpp">
-      <Filter>Powerups</Filter>
-    </ClCompile>
-    <ClCompile Include="PowerupFastBall.cpp">
-      <Filter>Powerups</Filter>
-    </ClCompile>
-    <ClCompile Include="PowerupFireBall.cpp">
-      <Filter>Powerups</Filter>
+    <ClCompile Include="PowerupUIRenderer.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -86,29 +77,20 @@
     <ClInclude Include="PowerupManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PowerupBase.h">
+    <ClInclude Include="PowerupRenderer.h">
       <Filter>Powerups</Filter>
     </ClInclude>
     <ClInclude Include="UI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PowerupBigPaddle.h">
-      <Filter>Powerups</Filter>
-    </ClInclude>
     <ClInclude Include="CONSTANTS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PowerupSlowBall.h">
-      <Filter>Powerups</Filter>
+    <ClInclude Include="Powerup.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PowerupSmallPaddle.h">
-      <Filter>Powerups</Filter>
-    </ClInclude>
-    <ClInclude Include="PowerupFastBall.h">
-      <Filter>Powerups</Filter>
-    </ClInclude>
-    <ClInclude Include="PowerupFireBall.h">
-      <Filter>Powerups</Filter>
+    <ClInclude Include="PowerupUIRenderer.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

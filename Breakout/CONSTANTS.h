@@ -43,7 +43,7 @@ constexpr float UI_LIFE_PADDING = 20.0f;
 // Other game settings
 constexpr float PAUSE_TIME_BUFFER = 0.5f;
 constexpr float POWERUP_FREQUENCY = 7.5f;
-constexpr int INITIAL_LIVES = 3;
+constexpr int INITIAL_LIVES = 10;
 
 // Colour Palette
 const sf::Color ballEffectsColour = sf::Color(100, 100, 200, 255); // blue-ish?
