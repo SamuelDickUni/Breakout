@@ -1,4 +1,4 @@
-# Breakout
+# Breakout - 2308693 (Sam Dick)
 
 W Kavanagh & N Merchant. Summer 2024 (last maintained, Oct 26)
 
@@ -17,23 +17,11 @@ fire ball (green)
 
 You are to spend between three and eight hours improving this simple Breakout implementation in a way to best demonstrate your capabilities as a games programmer. 
 
-## Suggested tasks
-
-* Implement mouse input for pad
-* Improved VFX (ball trail, paddle hit response, brick particle destruction)
-* Better UI (progress bar rather than timer for countdown).
-* Add an actual game loop
-* Better ball physics (Box2D)
-* Leaderboards
-* More ball types (e.g., multiball, sticky ball, brick-tracking ball)
-    * Note: smallPaddle is too simple to be impressive.
-* Sounds with increasing tone between bounces.
-* Implement commentary with calls to an LLM such as Ollama
-
 # Time Details and Changelist
-_TO DO_
+Time Spent: 4h:40m
 
-<Add information to this section about the time you've taken for this task along with a professional changelist.>
+- Changed Powerups to use a data driven model, allowing for multiple simultaneous effects.
+- Bricks now have health, that decreases when hit until they're destroyed
 
 ---
 
