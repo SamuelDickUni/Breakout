@@ -48,5 +48,5 @@ private:
     UI* _ui;
 
     static constexpr float PAUSE_TIME_BUFFER = 0.5f;
-    static constexpr float POWERUP_FREQUENCY = 2.5f;    // time between minimum powerup spawn
+    static constexpr float POWERUP_FREQUENCY = POWERUP_FREQUENCY;    // time between minimum powerup spawn
 };

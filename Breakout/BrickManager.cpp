@@ -18,7 +18,7 @@ void BrickManager::createBricks(int rows, int cols, float brickWidth, float bric
         for (int j = 0; j < cols; ++j) {
             float x = j * (brickWidth + spacing) + leftEdge;
             float y = i * (brickHeight + spacing) + TOP_PADDING;
-            _bricks.emplace_back(x, y, brickWidth, brickHeight);
+            _bricks.emplace_back(x, y, brickWidth, brickHeight, BRICK_HEALTH);
         }
     }
 }
@@ -30,31 +30,60 @@ void BrickManager::render()
     }
 }
 
-int BrickManager::checkCollision(sf::CircleShape& ball, sf::Vector2f& direction)
+
+
+CollisionResponse BrickManager::checkCollision(sf::CircleShape& ball, sf::Vector2f& direction, Brick*& hitBrick)
 {
-    int collisionResponse = 0;  // set to 1 for horizontal collision and 2 for vertical.
-    for (auto& brick : _bricks) {
+    CollisionResponse collisionResponse = NoCollision;
+    for (Brick& brick : _bricks) {
+		if (brick.isDestroyed()) continue; // Skip destroyed bricks
         if (!brick.getBounds().intersects(ball.getGlobalBounds())) continue;    // no collision, skip.
 
         sf::Vector2f ballPosition = ball.getPosition();
-        float ballY = ballPosition.y + 0.5f * ball.getGlobalBounds().height;
         sf::FloatRect brickBounds = brick.getBounds();
+		float  ballX = ballPosition.x + 0.5f * ball.getGlobalBounds().width;
+        float ballY = ballPosition.y + 0.5f * ball.getGlobalBounds().height;
+		float left = brickBounds.left;
+		float right = brickBounds.left + brickBounds.width;
+		float centreX = brickBounds.left + 0.5f * brickBounds.width;
+		float top = brickBounds.top;
+		float bottom = brickBounds.top + brickBounds.height;
+		float centreY = brickBounds.top + 0.5f * brickBounds.height;
+		float width = brickBounds.width;
+		float height = brickBounds.height;
 
-        // default vertical bounce (collision is top/bottom)
-        collisionResponse = 2;
-        if (ballY > brickBounds.top && ballY < brickBounds.top + brickBounds.height)
-            // unless it's horizontal (collision from side)
-            collisionResponse = 1;
+		float dx = ballX - centreX;
+		float dy = ballY - centreY;
 
-        // Mark the brick as destroyed (for simplicity, let's just remove it from rendering)
-        // In a complete implementation, you would set an _isDestroyed flag or remove it from the vector
-        brick = _bricks.back();
-        _bricks.pop_back();
-        break;
-    }
+		if (std::abs(dx) / width > std::abs(dy) / height)	// horizontal collision
+		{ 
+			if (dx < 0) { // left side
+				collisionResponse = LeftCollision;
+			}
+			else { // right side
+				collisionResponse = RightCollision;
+			}
+		}
+		else												// vertical collision
+		{ 
+			if (dy < 0) { // top side
+				collisionResponse = TopCollision;
+			}
+			else { // bottom side
+				collisionResponse = BottomCollision;
+			}
+		}
+		hitBrick = &brick; // Store the hit brick
+		break;
+	}
     if (_bricks.size() == 0)
     {
         _gameManager->levelComplete();
     }
     return collisionResponse;
+}
+
+CollisionResponse BrickManager::checkCollision(sf::CircleShape& ball, sf::Vector2f& direction) {
+	Brick* dummyBrick = nullptr; // Create a dummy brick to hold the hit brick
+	return checkCollision(ball, direction, dummyBrick);
 }

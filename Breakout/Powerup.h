@@ -4,10 +4,10 @@
 
 class PaddleModifier
 {
-	float _sizeMultiplier = 1.f;    // multiplier for paddle size (stacks additively)
+	float _sizeMultiplier = 0.f;    // multiplier for paddle size (stacks additively)
 
 public:
-	PaddleModifier(float sizeMultiplier = 1.f) : _sizeMultiplier(sizeMultiplier) {}
+	PaddleModifier(float sizeMultiplier = 0.f) : _sizeMultiplier(sizeMultiplier) {}
 
 	float getSizeMultiplier() const { return _sizeMultiplier; }
 
@@ -19,12 +19,12 @@ public:
 };
 class BallModifier
 {
-	float _speedMultiplier = 1.f;     // multiplier for ball speed
+	float _speedMultiplier = 0.f;     // multiplier for ball speed
 	float _damageAddent = 0.f;        // additive damage to ball      (applies before multiplier)
-	float _damageMultiplier = 1.f;    // multiplier for ball damage   (applies after additive, stacks additively)
+	float _damageMultiplier = 0.f;    // multiplier for ball damage   (applies after additive, stacks additively)
 
 public:
-	BallModifier(float speedMultiplier = 1.f, float damageAddent = 0.f, float damageMultiplier = 1.f)
+	BallModifier(float speedMultiplier = 0.f, float damageAddent = 0.f, float damageMultiplier = 0.f)
 		: _speedMultiplier(speedMultiplier), _damageAddent(damageAddent), _damageMultiplier(damageMultiplier) {
 	}
 
@@ -34,7 +34,7 @@ public:
 
 	BallModifier operator +(const BallModifier& rhs) const {
 		BallModifier result;
-		result._speedMultiplier = _speedMultiplier * rhs._speedMultiplier;
+		result._speedMultiplier = _speedMultiplier + rhs._speedMultiplier;
 		result._damageAddent = _damageAddent + rhs._damageAddent;
 		result._damageMultiplier = _damageMultiplier + rhs._damageMultiplier; // multipiers stack additively
 		return result;

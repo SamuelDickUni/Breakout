@@ -1,4 +1,5 @@
 #include "PowerupManager.h"
+#include <iostream>
 
 
 PowerupManager::PowerupManager(sf::RenderWindow* window, Paddle* paddle, Ball* ball)
@@ -30,6 +31,20 @@ void PowerupManager::update(float dt)
 		std::remove_if(_activePowerups.begin(), _activePowerups.end(),
 			[](const ActivePowerup& powerup) { return powerup.remainingTime <= 0; }),
 		_activePowerups.end());
+
+
+	PaddleModifier accumulatedPaddleModifier{ 0.f };
+	BallModifier accumulatedBallModifier{ 0.f, 0.f, 0.f };
+
+	for (const auto& powerup : _activePowerups)
+	{
+		accumulatedPaddleModifier = accumulatedPaddleModifier + powerup.powerup->getPaddleModifier();
+		accumulatedBallModifier = accumulatedBallModifier + powerup.powerup->getBallModifier();
+	}
+
+	_paddle->setWidth(1.0f + accumulatedPaddleModifier.getSizeMultiplier());
+	_ball->setVelocity((1.0f + accumulatedBallModifier.getSpeedMultiplier()) * BALL_SPEED);
+	_ball->setPower((BALL_DEFAULT_DAMAGE + accumulatedBallModifier.getDamageAddent()) * (1.0f + accumulatedBallModifier.getDamageMultiplier()));
 }
 
 void PowerupManager::render()

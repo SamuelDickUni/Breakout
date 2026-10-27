@@ -14,7 +14,7 @@ public:
     void update(float dt);
     void render();
     sf::FloatRect getBounds() const;
-    void setWidth(float coeff, float duration);
+    void setWidth(float coeff);
 
 private:
 

@@ -24,6 +24,8 @@ constexpr float PADDLE_SPEED = 300.0f;
 // Ball settings
 constexpr float BALL_RADIUS = 10.0f;
 constexpr float BALL_SPEED = 400.0f;
+constexpr float BALL_MIN_SPEED = 100.0f;
+constexpr float BALL_DEFAULT_DAMAGE = 1.0f;
 
 // Brick settings
 constexpr float BRICK_WIDTH = 75.0f;
@@ -31,6 +33,9 @@ constexpr float BRICK_HEIGHT = 20.0f;
 constexpr float BRICK_PADDING = 5.0f;
 constexpr int BRICK_ROWS = 5;
 constexpr int BRICK_COLUMNS = 10;
+constexpr int BRICK_HEALTH = 10; // Default health for bricks
+
+constexpr float OVERKILL_THRESHOLD = 0.9f; // Amount of max health that can be exceeded before overkill is triggered
 
 // Power-up settings
 constexpr float POWERUP_RADIUS = 15.0f;

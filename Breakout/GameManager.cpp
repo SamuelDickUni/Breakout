@@ -23,11 +23,11 @@ void GameManager::initialize()
     _ball = new Ball(_window, 400.0f, this); 
     _powerupManager = new PowerupManager(_window, _paddle, _ball);
     _powerupManager->RegisterPowerUps({
-		//std::make_shared<Powerup>(5.0f, "Big Paddle",   PaddleModifier{ 0.5f }),            // Increases paddle size by 50%
-		std::make_shared<Powerup>(5.0f, "Small Paddle", PaddleModifier{ -0.5f }),           // Decreases paddle size by 50%
-		//std::make_shared<Powerup>(5.0f, "Slow Ball",    BallModifier{ 0.5f, 0.f, 1.f }),    // Decreases ball speed by 50%
-		std::make_shared<Powerup>(10.0f, "Fast Ball",    BallModifier{ 1.f, 0.f, 1.f }),     // Increases ball speed by 100%
-		//std::make_shared<Powerup>(5.0f, "Fire Ball",    BallModifier{ 1.f, 10.f, 1.f })     // Increases ball damage by 10
+		std::make_shared<Powerup>(5.0f, "Big Paddle",       PaddleModifier{ 0.5f }),            // Increases paddle size by 50%
+		//std::make_shared<Powerup>(5.0f, "Small Paddle",     PaddleModifier{ -0.5f }),           // Decreases paddle size by 50%
+		std::make_shared<Powerup>(50.0f, "Slow Ball",        BallModifier{ -0.25f, 0.f, 0.f }),    // Decreases ball speed by 25%
+		std::make_shared<Powerup>(5.0f, "Fast Ball",        BallModifier{ 1.f, 0.f, 0.5f }),     // Increases ball speed by 100% increases ball damage by 50%
+		std::make_shared<Powerup>(5.0f, "Fire Ball",      BallModifier{ 1.f, 10.f, 0.f })        // Increases ball damage by 9
 
 		});
     _ui = new UI(_window, _lives, this);
@@ -102,9 +102,6 @@ void GameManager::update(float dt)
         _timeLastPowerupSpawned = _time;
     }
 
-    // move paddle
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) _paddle->moveRight(dt);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) _paddle->moveLeft(dt);
 
     // update everything 
     _paddle->update(dt);

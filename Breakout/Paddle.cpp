@@ -13,35 +13,16 @@ Paddle::~Paddle()
 {
 }
 
-void Paddle::moveLeft(float dt)
+void Paddle::update(float dt)
 {
     float position = _sprite.getPosition().x;
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && position > 0)
-    {
-        _sprite.move(sf::Vector2f(-dt * PADDLE_SPEED, 0));
-    }
-}
-
-void Paddle::moveRight(float dt)
-{
-    float position = _sprite.getPosition().x;
-
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && position < _window->getSize().x - _width)
     {
         _sprite.move(sf::Vector2f(dt * PADDLE_SPEED, 0));
     }
-}
-
-void Paddle::update(float dt)
-{
-    if (_timeInNewSize > 0)
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && position > 0)
     {
-        _timeInNewSize -= dt;
-    }
-    else
-    {
-        setWidth(1.0f, 0.0f); // Reset to default width after duration
+        _sprite.move(sf::Vector2f(-dt * PADDLE_SPEED, 0));
     }
 }
 
@@ -57,11 +38,13 @@ sf::FloatRect Paddle::getBounds() const
 
 // update width by SF of coeff. 
 // ensure centre remains consistent.
-void Paddle::setWidth(float coeff, float duration)
+void Paddle::setWidth(float coeff)
 {
+	float _oldWidth = _width;
     _width = coeff * PADDLE_WIDTH;
     _sprite.setSize(sf::Vector2f(_width, _sprite.getSize().y));
-    _timeInNewSize = duration;
-    float newX = _sprite.getPosition().x + (_width - PADDLE_WIDTH) / 2;
+    float newX = _sprite.getPosition().x + (_width - _oldWidth) / 2; 
+	if (newX < 0) newX = 0; // left bound
+	else if (newX + _width > _window->getSize().x) newX = _window->getSize().x - _width; // right bound
     _sprite.setPosition(newX, _sprite.getPosition().y);
 }

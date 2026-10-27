@@ -1,11 +1,12 @@
 #include "Ball.h"
 #include "GameManager.h" // avoid cicular dependencies
+#include <iostream>
 
 Ball::Ball(sf::RenderWindow* window, float velocity, GameManager* gameManager)
     : _window(window), _velocity(velocity), _gameManager(gameManager),
-    _timeWithPowerupEffect(0.f), _isFireBall(false), _isAlive(true), _direction({1,1})
+    _timeWithPowerupEffect(0.f), _isAlive(true), _direction({1,1})
 {
-    _sprite.setRadius(RADIUS);
+    _sprite.setRadius(BALL_RADIUS);
     _sprite.setFillColor(sf::Color::Cyan);
     _sprite.setPosition(0, 300);
 }
@@ -16,30 +17,7 @@ Ball::~Ball()
 
 void Ball::update(float dt)
 {
-    // check for powerup, tick down or correct
-    if (_timeWithPowerupEffect > 0.f)
-    {
-        _timeWithPowerupEffect -= dt;
-    }
-    else
-    {
-        if (_velocity != VELOCITY)
-            _velocity = VELOCITY;   // reset speed.
-        else
-        {
-            setFireBall(0);    // disable fireball
-            _sprite.setFillColor(sf::Color::Cyan);  // back to normal colour.
-        }        
-    }
-
-    // Fireball effect
-    if (_isFireBall)
-    {
-        // Flickering effect
-        int flicker = rand() % 50 + 205; // Random value between 205 and 255
-        _sprite.setFillColor(sf::Color(flicker, flicker / 2, 0)); // Orange flickering color
-    }
-
+    
     // Update position with a subtle floating-point error
     _sprite.move(_direction * _velocity * dt);
 
@@ -48,7 +26,7 @@ void Ball::update(float dt)
     sf::Vector2u windowDimensions = _window->getSize();
 
     // bounce on walls
-    if ((position.x >= windowDimensions.x - 2 * RADIUS && _direction.x > 0) || (position.x <= 0 && _direction.x < 0))
+    if ((position.x >= windowDimensions.x - 2 * BALL_RADIUS && _direction.x > 0) || (position.x <= 0 && _direction.x < 0))
     {
         _direction.x *= -1;
     }
@@ -76,20 +54,39 @@ void Ball::update(float dt)
         _direction.x = paddlePositionProportion * 2.0f - 1.0f;
 
         // Adjust position to avoid getting stuck inside the paddle
-        _sprite.setPosition(_sprite.getPosition().x, _gameManager->getPaddle()->getBounds().top - 2 * RADIUS);
+        _sprite.setPosition(_sprite.getPosition().x, _gameManager->getPaddle()->getBounds().top - 2 * BALL_RADIUS);
     }
 
+	Brick* hitBrick = nullptr; // Create a dummy brick to hold the hit brick
     // collision with bricks
-    int collisionResponse = _gameManager->getBrickManager()->checkCollision(_sprite, _direction);
-    if (_isFireBall) return; // no collisisons when in fireBall mode.
-    if (collisionResponse == 1)
-    {
-        _direction.x *= -1; // Bounce horizontally
-    }
-    else if (collisionResponse == 2)
-    {
-        _direction.y *= -1; // Bounce vertically
-    }
+    CollisionResponse collisionResponse = _gameManager->getBrickManager()->checkCollision(_sprite, _direction, hitBrick);
+	if (collisionResponse != NoCollision && hitBrick != nullptr)
+	{
+	    bool overkill = false;
+	    hitBrick->hit(_power, overkill); // Apply damage to the hit brick
+		if (overkill) {
+            return;
+		}
+        // Adjust position to avoid getting stuck inside the brick
+		if (collisionResponse & TopCollision)
+		{
+			_sprite.setPosition(_sprite.getPosition().x, hitBrick->getBounds().top - 2 * BALL_RADIUS);
+			_direction.y = -std::abs(_direction.y); // Ensure the ball is moving upwards
+		}
+		else if (collisionResponse & BottomCollision)
+		{
+			_sprite.setPosition(_sprite.getPosition().x, hitBrick->getBounds().top + hitBrick->getBounds().height);
+			_direction.y = std::abs(_direction.y); // Ensure the ball is moving downwards
+		}
+        if (collisionResponse & LeftCollision) {
+			_sprite.setPosition(hitBrick->getBounds().left - 2 * BALL_RADIUS, _sprite.getPosition().y);
+			_direction.x = -std::abs(_direction.x); // Ensure the ball is moving to the left
+		}
+        else if (collisionResponse & RightCollision) {
+            _sprite.setPosition(hitBrick->getBounds().left + hitBrick->getBounds().width, _sprite.getPosition().y);
+			_direction.x = std::abs(_direction.x); // Ensure the ball is moving to the right
+        }
+	}
 }
 
 void Ball::render()
@@ -97,20 +94,13 @@ void Ball::render()
     _window->draw(_sprite);
 }
 
-void Ball::setVelocity(float coeff, float duration)
+void Ball::setVelocity(float value)
 {
-    _velocity = coeff * VELOCITY;
-    _timeWithPowerupEffect = duration;
+    _velocity = std::max(value, BALL_MIN_SPEED);
 }
 
-void Ball::setFireBall(float duration)
+void Ball::setPower(float value)
 {
-    if (duration) 
-    {
-        _isFireBall = true;
-        _timeWithPowerupEffect = duration;        
-        return;
-    }
-    _isFireBall = false;
-    _timeWithPowerupEffect = 0.f;    
+    _power = value;
 }
+
